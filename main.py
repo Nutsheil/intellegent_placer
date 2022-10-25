@@ -15,7 +15,7 @@ img_path = "0.jpg"
 file_path = "images/dataset/test/"
 
 # PATHS IN MAIN FOLDER
-path_dataset_test = Path("images/dataset/test/")
+path_dataset_test = Path("dataset/test/")
 path_dataset_true = Path("images/dataset/true/")
 path_dataset_false = Path("images/dataset/false/")
 path_primitives = Path("images/primitives/")
