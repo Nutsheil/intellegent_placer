@@ -1,6 +1,8 @@
-from prikol import get_joke
+from intelligent_placer_lib.intelligent_placer import placer
+from prikol import get_contours
 from matplotlib import pyplot as plt
 from pathlib import Path
+from intelligent_placer_lib.loader import load_images
 import cv2
 
 # CONSTANTS
@@ -11,8 +13,8 @@ THICKNESS = 5
 CONTOUR_IDX = -1
 
 # FOR SINGLE TEST
-img_path = "0.jpg"
-file_path = "images/dataset/test/"
+img_path = "8.1.jpg"
+file_path = "images/primitives/"
 
 # PATHS IN MAIN FOLDER
 path_dataset_test = Path("images/dataset/test/")
@@ -31,7 +33,7 @@ def get_paths(folder_path):
 def process_image_to_demo(path):
     image = cv2.imread(str(path))
     image = cv2.resize(image, (image.shape[1] // 4, image.shape[0] // 4))
-    img, masks_pts = get_joke(image.copy())
+    img, masks_pts = get_contours(image.copy())
 
     bounding_box = img.copy()
     contours = img.copy()
@@ -76,8 +78,19 @@ def run_demo(path_dataset):
         process_image_to_demo(path_image)
 
 
+def show_items(path_items):
+    paths_images = get_paths(path_items)
+    for path_image in paths_images:
+        process_image_to_demo(path_image)
+
+
 def main():
-    run_demo(path_dataset_test)
+    # run_demo(path_dataset_test)
+    # show_items(path_primitives)
+    # images, filenames = load_images("images/primitives/v1")
+    # print(filenames)
+    # placer("images/primitives/v1")
+    placer("images/dataset/test")
 
 
 if __name__ == '__main__':

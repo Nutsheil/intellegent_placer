@@ -7,8 +7,7 @@ CANNY_THRESHOLD_HIGH = 200
 APPROX_CURVE = 0.000001
 
 
-# you can laugh about it
-def get_joke(image):
+def get_contours(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edged = cv2.Canny(gray, CANNY_THRESHOLD_LOW, CANNY_THRESHOLD_HIGH)
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, KERNEL_SIZE)
