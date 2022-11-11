@@ -1,49 +1,55 @@
-from matplotlib import pyplot as plt
+import cv2
+import numpy as np
 from intelligent_placer_lib.contours import get_contours_v1
 from intelligent_placer_lib.loader import load_images
-from intelligent_placer_lib.show import show_images_and_contours
-import cv2
+from intelligent_placer_lib.structure import Picture, Polygon, Item, Primitive
+from intelligent_placer_lib.algorithm import my_first_algorithm
+from intelligent_placer_lib.show import \
+    show_images_and_contours, \
+    show_images_with_contours, \
+    show_primitives_with_contours
 
-# CONSTANTS
-JPG_FORMAT = "*.jpg"
-RGB_WHITE = (255, 255, 255)
-RGB_BLACK = (0, 0, 0)
-THICKNESS = 5
-CONTOUR_IDX = -1
+
+def compress_image(image, scale):
+    new_size = (int(image.shape[1] * scale), int(image.shape[0] * scale))
+    return cv2.resize(image, new_size)
+
+
+def split_items_and_polygon(picture, contours):
+    picture.polygon = Polygon([contours[0]])
+    for i in range(1, len(contours)):
+        picture.items.append(Item([contours[i]]))
+    picture.sort_items()
+    return
 
 
 def placer(path_image):
     images, filenames = load_images(path_image)
-    contours = []
-    for image in images:
-        contour = get_contours_v1(image.copy())
-        contours.append(contour)
-    show_images_and_contours(images, contours)
+    pictures = []
+    for image, filename in zip(images, filenames):
+        image = compress_image(image, 0.5)
+        contours = get_contours_v1(image)
+        picture = Picture(image, filename, contours)
+        split_items_and_polygon(picture, contours)
+        pictures.append(picture)
+
+    show_images_and_contours(pictures)
+    # show_images_with_contours(pictures)
+
+    for picture in pictures:
+        result = my_first_algorithm(picture)
+        print(picture.name, " result: ", result)
 
 
-def placer_v2(path_image):
-    images, filenames = load_images("images/primitives/v1")
-    _, axs = plt.subplots(len(images), 3, figsize=(12, 12))
-    # axs = axs.flatten()
-    # axs[0].set_title("Original image")
-    # axs[1].set_title("Bounding boxes")
-    # axs[2].set_title("Contours")
-    index = 0
-    for image in images:
-        contours = get_contours_v1(image.copy())
+def init_items(path_items):
+    images, filenames = load_images(path_items)
+    primitives = []
+    for image, filename in zip(images, filenames):
+        image = compress_image(image, 0.2)
+        contour = get_contours_v1(image)
+        if len(contour) > 0:
+            primitives.append(Primitive(image, filename, contour))
 
-        image_bbox = image.copy()
-        image_contours = image.copy()
+    show_primitives_with_contours(primitives)
 
-        cv2.drawContours(image_contours, contours, CONTOUR_IDX, RGB_WHITE, THICKNESS)
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            image_bbox = cv2.rectangle(image_bbox, (x, y), (x + w, y + h), RGB_BLACK, THICKNESS)
-
-        # axs[0][0].imshow(image)
-        axs[index][0].imshow(image)
-        axs[index][1].imshow(image_bbox)
-        axs[index][2].imshow(image_contours)
-        index = index+1
-
-    plt.show()
+    return

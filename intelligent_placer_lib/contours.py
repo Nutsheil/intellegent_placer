@@ -8,7 +8,7 @@ APPROX_CURVE = 0.000001
 
 
 def get_contours_v1(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2GRAY)
     edged = cv2.Canny(gray, CANNY_THRESHOLD_LOW, CANNY_THRESHOLD_HIGH)
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, KERNEL_SIZE)
     closed = cv2.morphologyEx(edged, cv2.MORPH_CLOSE, kernel)
@@ -17,9 +17,11 @@ def get_contours_v1(image):
 
     masks_pts = []
     for contour in contours:
-        peri = cv2.arcLength(contour, True)
-        approx = cv2.approxPolyDP(contour, APPROX_CURVE * peri, True)
-        masks_pts.append(approx)
+        area = cv2.contourArea(contour)
+        if area > 1000:
+            peri = cv2.arcLength(contour, True)
+            approx = cv2.approxPolyDP(contour, APPROX_CURVE * peri, True)
+            masks_pts.append(approx)
 
     return masks_pts
 
