@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from intelligent_placer_lib.contours import get_contours, get_contours_v2
+from intelligent_placer_lib.contours import get_contours
 from intelligent_placer_lib.loader import load_pictures
 from intelligent_placer_lib.structure import Picture, Polygon, Item, Primitive
 from intelligent_placer_lib.algorithm import my_first_algorithm
