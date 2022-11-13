@@ -12,42 +12,40 @@ THICKNESS = 5
 CONTOUR_IDX = -1
 
 
-def show_images_and_contours(pictures):
-    for picture in pictures:
-        _, axs = plt.subplots(1, 2, figsize=(12, 12))
-        height = picture.image.shape[0]
-        width = picture.image.shape[1]
-        image_contours = np.zeros((height, width, 3), np.uint8)
+def fill_field_contours(picture: Picture):
+    height = picture.image.shape[0]
+    width = picture.image.shape[1]
+    picture.image_contours_only = np.zeros((height, width, 3), np.uint8)
+    picture.image_with_contours = picture.image.copy()
+    for item in picture.items:
+        cv2.drawContours(picture.image_contours_only, item.contour, CONTOUR_IDX, RGB_RED, THICKNESS)
+        cv2.drawContours(picture.image_with_contours, item.contour, CONTOUR_IDX, RGB_RED, THICKNESS)
 
-        for item in picture.items:
-            cv2.drawContours(image_contours, item.contour, CONTOUR_IDX, RGB_RED, THICKNESS)
-
-        cv2.drawContours(image_contours, picture.polygon.contour, CONTOUR_IDX, RGB_GREEN, THICKNESS)
-
-        axs[0].set_title(picture.name)
-        axs[1].set_title("Items count: {}".format(len(picture.items)))
-        axs[0].imshow(picture.image)
-        axs[1].imshow(image_contours)
-        plt.show()
-    return
+    cv2.drawContours(picture.image_contours_only, picture.polygon.contour, CONTOUR_IDX, RGB_GREEN, THICKNESS)
+    cv2.drawContours(picture.image_with_contours, picture.polygon.contour, CONTOUR_IDX, RGB_GREEN, THICKNESS)
 
 
-def show_images_with_contours(pictures):
-    for picture in pictures:
-        _, axs = plt.subplots(1, 2, figsize=(12, 12))
-        image_contours = picture.image.copy()
+def show_picture(picture: Picture, contours_only=True, with_contours=True):
+    image_count = 1 + contours_only + with_contours
+    _, axs = plt.subplots(1, image_count, figsize=(12, 12))
 
-        for item in picture.items:
-            cv2.drawContours(image_contours, item.contour, CONTOUR_IDX, RGB_RED, THICKNESS)
+    index = 0
 
-        cv2.drawContours(image_contours, picture.polygon.contour, CONTOUR_IDX, RGB_GREEN, THICKNESS)
+    axs[index].set_title(picture.name)
+    axs[index].imshow(picture.image)
+    index += 1
 
-        axs[0].set_title(picture.name)
-        axs[1].set_title("Items count: {}".format(len(picture.items)))
-        axs[0].imshow(picture.image)
-        axs[1].imshow(image_contours)
-        plt.show()
-    return
+    if contours_only:
+        axs[index].set_title("Items count: {}".format(len(picture.items)))
+        axs[index].imshow(picture.image_contours_only)
+        index += 1
+
+    if with_contours:
+        axs[index].set_title("Items count: {}".format(len(picture.items)))
+        axs[index].imshow(picture.image_with_contours)
+        index += 1
+
+    plt.show()
 
 
 def show_primitives_with_contours(primitives):

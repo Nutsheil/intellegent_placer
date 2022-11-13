@@ -28,9 +28,12 @@ class Picture:
     def __init__(self, image, name, contours=None):
         self.image = image
         self.name = name
-        self.contours = contours            # will be removed in next version
+        self.contours = contours            # will be removed in next version (for debug now)
         self.items = []
         self.polygon = None
+        self.image_with_contours = None
+        self.image_contours_only = None
+        self.image_bbox = None
 
     def sort_items(self):
         self.items.sort(key=lambda x: x.area, reverse=True)
