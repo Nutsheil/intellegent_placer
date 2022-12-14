@@ -125,7 +125,7 @@
 # Навигация по файлам
 [Ссылка на объекты](images/primitives)  
 [Ссылка на датасет](images/dataset)  
-[Ссылка на результаты](images/results)
+[Ссылка на результаты](images/results)  
 [Демонстрационный файл](demonstration.ipynb)
 
 
