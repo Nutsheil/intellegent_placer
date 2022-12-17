@@ -10,10 +10,22 @@ ALLOWABLE_ERROR = 2                         # Максимальная погр�
 PATH_RESULT = "images/results/"             # Папка для сохранения изображений
 
 
+# Функция масштабирования изображения под многоугольник
+def set_plt_size(figure: Polygon):
+    width, height = get_polygon_frame(figure)
+    f = plt.figure()
+    if width > height:
+        f.set_figwidth(5 * width / height)
+        f.set_figheight(5)
+    else:
+        f.set_figwidth(5)
+        f.set_figheight(5 * height / width)
+
+
 # Функция отрисовки полигона
 def plot_polygon(polygon: Polygon, color_flag: str):
     polygon_rings = list(polygon.exterior.coords)
-    plt.plot([point[0] for point in polygon_rings], [point[1] for point in polygon_rings], color_flag)
+    plt.plot([point[0] for point in polygon_rings], [-point[1] for point in polygon_rings], color_flag)
 
 
 # Функция сохранения изображения
@@ -25,7 +37,10 @@ def save_plot(picture: Picture):
 
 # Функция сохранения результата "False"
 def save_false_plot(picture: Picture):
-    plt.clf()
+    plt.close()
+    f = plt.figure()
+    f.set_figwidth(5)
+    f.set_figheight(5)
     plt.text(0.5, 0.5, 'FALSE', ha='center', va='center', fontsize=28, color='red')
     save_plot(picture)
 
@@ -51,7 +66,7 @@ def get_dist(point_1: (float, float), point_2: (float, float)):
 
 
 # Функция вычисления расстояния между центрами двух полигонов
-def dist_between_centers(polygon1: Polygon, polygon2: Polygon):
+def get_dist_between_centers(polygon1: Polygon, polygon2: Polygon):
     polygon1_center = get_polygon_center(polygon1)
     polygon2_center = get_polygon_center(polygon2)
     distance = get_dist(polygon1_center, polygon2_center)
@@ -69,6 +84,7 @@ def my_second_algorithm(picture: Picture):
         save_false_plot(picture)
         return False
 
+    set_plt_size(figure)                        # Масштабировать изображение под многоугольник
     plot_polygon(figure, 'g')                   # Отрисовка многоугольника
 
     for item in items:
@@ -79,10 +95,11 @@ def my_second_algorithm(picture: Picture):
 
         # Несколько итераций, для нахождения наилучшего решения. Чем больше, тем точнее, но медленнее
         for _ in range(ITERATIONS):
-            # Критерий нахождения оптимального положения
+            # Критерий нахождения оптимального положения (некая функция)
+            # Смещает предмет по входным параметрам и возвращает результат функции цели
             def criterion(args):
                 item_replaced = rotate(translate(item, xoff=args[0], yoff=args[1]), args[2])
-                return -figure.intersection(item_replaced).area - dist_between_centers(item_replaced, figure)
+                return -figure.intersection(item_replaced).area - get_dist_between_centers(item_replaced, figure)
 
             # Метод дифференциальной эволюции, куда передаются перемещения по x, y и вращение
             width, height = get_polygon_frame(figure)

@@ -1,8 +1,8 @@
-from .intelligent_placer import placer
+from .intelligent_placer import check_image
 import pandas as pd
 
 """
-    Данный пакет представляет собой функцию "placer", в которую пользователь должен передать путь к изображению
+    Данный пакет представляет собой функцию "check_image", в которую пользователь должен передать путь к изображению
     На изображении должен быть многоугольник и предметы
     Функция ответит на вопрос можно ли поместить предметы в многоугольник и выведет результаты на экран
     Так же, если нет необходимости отрисовки изображений на экран, в нее можно передать второй параметр False
@@ -42,7 +42,7 @@ def placer_demo(path_excel: str, path_dataset: str):
     count = 0
     for index, row in df.iterrows():
         count += 1
-        result = placer(path_dataset + row[KEY_NAME])
+        result = check_image(path_dataset + row[KEY_NAME])
 
         if result == row[KEY_RESULT]:
             successes.append(row[KEY_NAME])
@@ -53,9 +53,10 @@ def placer_demo(path_excel: str, path_dataset: str):
 
         print(f"filename: {row[KEY_NAME]} \t"
               f"result: {result}\t"
-              f"correct result: {True if row[KEY_RESULT] else False}\t\t"
-              # f"description: {row[KEY_DESCRIPTION]}")
-              "description: " + (row[KEY_DESCRIPTION] if not pd.isnull(row[KEY_DESCRIPTION]) else "-"))
+              # f"correct result: {True if row[KEY_RESULT] else False}\t\t"
+              f"correct result: {True if row[KEY_RESULT] else False}")
+        if not pd.isnull(row[KEY_DESCRIPTION]):
+            print(f"description: {row[KEY_DESCRIPTION]}")
 
     print(f"\nAll {count} tests were completed!\n"
           f"Success count: {len(successes)}\n"

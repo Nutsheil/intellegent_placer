@@ -42,7 +42,7 @@ def set_polygons_from_contours(picture: Picture):
 
 
 # Основная функция пакета intelligent_placer
-def placer(path_image: str, show_results=True) -> bool or [bool]:
+def check_image(path_image: str, show_results=True) -> bool or [bool]:
     pictures = load_pictures(path_image)                        # Считать изображение(я), поданное(ые) на вход
     results = []
 

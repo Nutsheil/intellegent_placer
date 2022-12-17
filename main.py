@@ -1,4 +1,4 @@
-from intelligent_placer_lib import placer, placer_demo
+from intelligent_placer_lib import check_image, placer_demo
 import pandas as pd
 
 PATH_EXCEL = "info.xlsx"                            # Путь к excel файлу с информацией
@@ -18,7 +18,7 @@ def main():
     count = 0                                       # Счетчик тестов
     for index, row in df.iterrows():
         count += 1
-        result = placer(PATH_DATASET + row[KEY_NAME], False)
+        result = check_image(PATH_DATASET + row[KEY_NAME], False)
 
         if result == row[KEY_RESULT]:
             successes.append(row[KEY_NAME])
@@ -29,9 +29,10 @@ def main():
 
         print(f"filename: {row[KEY_NAME]} \t"
               f"result: {result}\t"
-              f"correct result: {True if row[KEY_RESULT] else False}\t\t"
-              # f"description: {row[KEY_DESCRIPTION]}")
-              "description: " + (row[KEY_DESCRIPTION] if not pd.isnull(row[KEY_DESCRIPTION]) else "-"))
+              # f"correct result: {True if row[KEY_RESULT] else False}\t\t"
+              f"correct result: {True if row[KEY_RESULT] else False}")
+        if not pd.isnull(row[KEY_DESCRIPTION]):
+            print(f"description: {row[KEY_DESCRIPTION]}")
 
     print(f"\nAll {count} tests were completed!\n"
           f"Success count: {len(successes)}\n"
@@ -41,7 +42,7 @@ def main():
 
 # Для запуска одиночного тестирования
 def main2():
-    result = placer(PATH_DATASET + "1.jpg")
+    result = check_image(PATH_DATASET + "15.jpg")
     print(result)
 
 
@@ -51,4 +52,4 @@ def main3():
 
 
 if __name__ == '__main__':
-    main()
+    main2()
